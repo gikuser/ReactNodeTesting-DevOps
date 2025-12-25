@@ -1,0 +1,56 @@
+name: Deploy to Staging Environment
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: # Allows manual trigger button
+
+jobs:
+  deploy-staging:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Run Linting (Code Analysis)
+      # Placeholder for linting logic
+      run: echo "Linting code analysis..." 
+
+    - name: Run Unit Tests
+      # Ensures code is verified before deploying to Staging
+      run: npm test
+
+    - name: Build React App
+      run: npm run build-react
+
+    - name: Deploy Files to Staging Server
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.STAGING_EC2_IP }}
+        username: ubuntu
+        key: ${{ secrets.EC2_SSH_KEY }}
+        source: "./*"
+        target: "/home/ubuntu/app"
+
+    - name: Start Application on Staging Server
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.STAGING_EC2_IP }}
+        username: ubuntu
+        key: ${{ secrets.EC2_SSH_KEY }}
+        script: |
+          cd /home/ubuntu/app
+          # Install production dependencies
+          npm install --production
+          # Restart the app using PM2 (or start if not running)
+          pm2 restart all || pm2 start index.js --name "react-node-app"
+          pm2 save
