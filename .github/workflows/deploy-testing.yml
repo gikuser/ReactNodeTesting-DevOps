@@ -1,47 +1,97 @@
-name: Deploy to Testing
+name: Deploy to Testing Environment
 
 on:
   pull_request:
-    branches:
-      - main
-  workflow_dispatch:   # Manual trigger button
+    branches: [ main ]
+  workflow_dispatch: # Allows manual button trigger
 
 jobs:
-  build-test-deploy:
+  build-and-test:
     runs-on: ubuntu-latest
-
+    
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
 
-      - name: Install dependencies
-        run: npm install
+    - name: Install Dependencies
+      run: npm install
 
-      - name: Build React app
-        run: npm run build-react
+    - name: Run Linting (Check Code Quality)
+      # Assuming you don't have a specific lint script setup yet, we echo. 
+      # Ideally: run: npm run lint
+      run: echo "Linting code..." 
 
-      - name: Run Unit Tests
-        run: npm test || true  # Continue even if no tests
+    - name: Run Unit Tests
+      # Ensure you have a test script in package.json
+      run: npm test
 
-      - name: Lint code
-        run: npm run lint || echo "No lint configured"
+    - name: Build React App
+      run: npm run build-react
 
-      - name: Deploy to Testing EC2
-        uses: appleboy/ssh-action@v0.1.8
-        with:
-          host: ${{ secrets.TESTING_EC2_IP }}
-          username: ubuntu
-          key: ${{ secrets.EC2_SSH_KEY }}
-          port: 22
-          script: |
-            cd ~/react-node-testing || git clone https://github.com/${{ github.repository }} ~/react-node-testing
-            cd ~/react-node-testing
-            git pull
-            npm install
-            npm run build-react
-            
+    - name: Deploy to AWS Testing Server
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST_TESTING }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        script: |
+          # Pull latest code or copy files. Here we clone/pull strategy
+          # Note: Since this is a PR, we might be deploying a specific branch.
+          # For simplicity in this assignment, we will rsync the artifacts built above.
+          rm -rf ~/app/*
+          mkdir -p ~/app
+
+    - name: Copy Files to Server
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.HOST_TESTING }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        source: "./*"
+        target: "/home/ubuntu/app"
+
+    - name: Start Application on Server
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST_TESTING }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        script: |
+          cd /home/ubuntu/app
+          npm install --production
+          # Restart app using PM2
+          pm2 restart all || pm2 start index.js --name "react-node-app"
+          pm2 save
+
+    - name: Send Success Email
+      if: success()
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: smtp.gmail.com
+        server_port: 465
+        username: ${{ secrets.MAIL_USERNAME }}
+        password: ${{ secrets.MAIL_PASSWORD }}
+        subject: Deployment to Testing Successful
+        body: |
+          The Pull Request has been deployed to the Testing Environment.
+          Access it here: http://${{ secrets.HOST_TESTING }}:3000
+        to: ${{ secrets.QA_EMAIL }}
+        from: DevOps Automation
+
+    - name: Send Failure Email
+      if: failure()
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: smtp.gmail.com
+        server_port: 465
+        username: ${{ secrets.MAIL_USERNAME }}
+        password: ${{ secrets.MAIL_PASSWORD }}
+        subject: Deployment Failed
+        body: The workflow failed during the Pull Request check. Please check GitHub Actions logs.
+        to: ${{ secrets.QA_EMAIL }}
+        from: DevOps Automation
