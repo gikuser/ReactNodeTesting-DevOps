@@ -3,7 +3,7 @@ name: Deploy to Testing Environment
 on:
   pull_request:
     branches: [ main ]
-  workflow_dispatch: # Allows manual button trigger
+  workflow_dispatch: # Allows manual trigger button
 
 jobs:
   build-and-test:
@@ -21,77 +21,36 @@ jobs:
     - name: Install Dependencies
       run: npm install
 
-    - name: Run Linting (Check Code Quality)
-      # Assuming you don't have a specific lint script setup yet, we echo. 
-      # Ideally: run: npm run lint
-      run: echo "Linting code..." 
+    - name: Run Linting (Code Analysis)
+      # If you don't have a specific lint command, this placeholder ensures the step exists
+      run: echo "Linting code analysis..." 
 
     - name: Run Unit Tests
-      # Ensure you have a test script in package.json
+      # runs the test script defined in package.json
       run: npm test
 
     - name: Build React App
       run: npm run build-react
 
-    - name: Deploy to AWS Testing Server
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.HOST_TESTING }}
-        username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.EC2_SSH_KEY }}
-        script: |
-          # Pull latest code or copy files. Here we clone/pull strategy
-          # Note: Since this is a PR, we might be deploying a specific branch.
-          # For simplicity in this assignment, we will rsync the artifacts built above.
-          rm -rf ~/app/*
-          mkdir -p ~/app
-
-    - name: Copy Files to Server
+    - name: Deploy Files to Testing Server
       uses: appleboy/scp-action@master
       with:
-        host: ${{ secrets.HOST_TESTING }}
-        username: ${{ secrets.USERNAME }}
+        host: ${{ secrets.TESTING_EC2_IP }}
+        username: ubuntu
         key: ${{ secrets.EC2_SSH_KEY }}
         source: "./*"
         target: "/home/ubuntu/app"
 
-    - name: Start Application on Server
+    - name: Start Application on Testing Server
       uses: appleboy/ssh-action@master
       with:
-        host: ${{ secrets.HOST_TESTING }}
-        username: ${{ secrets.USERNAME }}
+        host: ${{ secrets.TESTING_EC2_IP }}
+        username: ubuntu
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
           cd /home/ubuntu/app
+          # Install production dependencies
           npm install --production
-          # Restart app using PM2
+          # Restart the app using PM2 (or start if not running)
           pm2 restart all || pm2 start index.js --name "react-node-app"
           pm2 save
-
-    - name: Send Success Email
-      if: success()
-      uses: dawidd6/action-send-mail@v3
-      with:
-        server_address: smtp.gmail.com
-        server_port: 465
-        username: ${{ secrets.MAIL_USERNAME }}
-        password: ${{ secrets.MAIL_PASSWORD }}
-        subject: Deployment to Testing Successful
-        body: |
-          The Pull Request has been deployed to the Testing Environment.
-          Access it here: http://${{ secrets.HOST_TESTING }}:3000
-        to: ${{ secrets.QA_EMAIL }}
-        from: DevOps Automation
-
-    - name: Send Failure Email
-      if: failure()
-      uses: dawidd6/action-send-mail@v3
-      with:
-        server_address: smtp.gmail.com
-        server_port: 465
-        username: ${{ secrets.MAIL_USERNAME }}
-        password: ${{ secrets.MAIL_PASSWORD }}
-        subject: Deployment Failed
-        body: The workflow failed during the Pull Request check. Please check GitHub Actions logs.
-        to: ${{ secrets.QA_EMAIL }}
-        from: DevOps Automation
