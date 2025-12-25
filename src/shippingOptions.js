@@ -64,8 +64,8 @@ function ShippingOptions(props) {
   }
 
   return (
-    <div className={classes.root}>
-      <h4 className={classes.title}>Choose your delivery option:</h4>
+    <div>
+      <h4>🚚 Choose your delivery option:</h4>
       <RadioGroup
         className={classes.radioGroup}
         aria-label="delivery"
@@ -73,24 +73,25 @@ function ShippingOptions(props) {
         name="delivery"
         value={shipping}
         onChange={(event, value) => handleChange(event, value)}
+        style={{ gap: '10px', flexWrap: 'wrap' }}
       >
         <FormControlLabel 
           value={0} 
-          control={<Radio className={classes.radio} inputProps={{"data-testid": `radio-button-free`}} />} 
-          label="Free 10 day shipping"
-          classes={{ root: `${classes.radioLabel} ${shipping === 0 ? classes.radioLabelChecked : ''}` }}
+          control={<Radio color="primary" inputProps={{"data-testid": `radio-button-free`}} />} 
+          label="🆓 Free 10 day shipping" 
+          style={{ margin: '5px 0' }}
         />
         <FormControlLabel 
           value={500} 
-          control={<Radio className={classes.radio} inputProps={{"data-testid": `radio-button-2day`}} />} 
-          label="$5.00 2-day shipping"
-          classes={{ root: `${classes.radioLabel} ${shipping === 500 ? classes.radioLabelChecked : ''}` }}
+          control={<Radio color="primary" inputProps={{"data-testid": `radio-button-2day`}} />} 
+          label="⚡ $5.00 2-day shipping" 
+          style={{ margin: '5px 0' }}
         />
         <FormControlLabel 
           value={2000} 
-          control={<Radio className={classes.radio} inputProps={{"data-testid": `radio-button-overnight`}} />} 
-          label="$20.00 overnight shipping"
-          classes={{ root: `${classes.radioLabel} ${shipping === 2000 ? classes.radioLabelChecked : ''}` }}
+          control={<Radio color="primary" inputProps={{"data-testid": `radio-button-overnight`}} />} 
+          label="🚀 $20.00 overnight shipping" 
+          style={{ margin: '5px 0' }}
         />
       </RadioGroup>
     </div>

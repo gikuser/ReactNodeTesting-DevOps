@@ -16,6 +16,24 @@ let activeCarts = [
         description: "Assorted sizes, 2 cartons",
         cost: 295,
         imageUrl: "blackberries.jpg"
+      },
+      {
+        title: "Delicious Cookies",
+        description: "Homemade chocolate chip cookies, 1 dozen",
+        cost: 450,
+        imageUrl: "cookies.jpg"
+      },
+      {
+        title: "Organic Blueberries",
+        description: "Fresh picked, 3 cartons",
+        cost: 350,
+        imageUrl: "blackberries.jpg"
+      },
+      {
+        title: "Gourmet Cookie Box",
+        description: "Assorted flavors, premium selection",
+        cost: 599,
+        imageUrl: "cookies.jpg"
       }
     ]
   },

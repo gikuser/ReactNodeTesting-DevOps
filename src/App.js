@@ -15,26 +15,33 @@ function App(props) {
   return (
     <>
       <div className="App">
-        <div className="app-header">
-          <h1>🛍️ Shopping Cart</h1>
-          <p data-testid="thanks_id">Thank you for shopping with us!</p>
+        <div className="app-container">
+          <div className="app-header">
+            <h1>🛒 Your Shopping Cart</h1>
+            <p data-testid="thanks_id">Thank you for shopping with us!</p>
+          </div>
+          
+          <div className="cart-section">
+            <CartView shippingCost={shippingCost} cartId={props.cartId} />
+          </div>
+          
+          <div className="shipping-section">
+            <ShippingOptions onChangeValue={handleChangeValue} />
+          </div>
+          
+          <button 
+            className="purchase-button"
+            onClick={() => setMsgYNModal({
+              showMsgYNModal: true, 
+              message: "Do you agree with the purchase agreement?", 
+              methodOnClose: (decision) => {
+                setMsgYNModal({ msgYNModalState: { showMsgYNModal: false, message: "", methodOnClose: ()=>{} } })
+              }
+            })} 
+          >
+            Complete Purchase
+          </button>
         </div>
-        <div className="cart-container">
-          <CartView shippingCost={shippingCost} cartId={props.cartId} />
-        </div>
-        <div className="shipping-container">
-          <ShippingOptions onChangeValue={handleChangeValue} />
-        </div>
-        <button 
-          className="purchase-button"
-          onClick={() => setMsgYNModal({
-            showMsgYNModal: true, message: "Do you agree with the purchase agreement?", methodOnClose: (decision) => {
-              setMsgYNModal({ msgYNModalState: { showMsgYNModal: false, message: "", methodOnClose: ()=>{} } })
-            }
-          })} 
-        >
-          Make Purchase
-        </button>
       </div>
       <MsgYNModal
         style={{ width: '80%', maxHeight: 435 }}

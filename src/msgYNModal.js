@@ -76,25 +76,33 @@ function MsgYNModal(props) {
       classes={{ paper: classes.dialog }}
       {...other}
     >
-      <DialogTitle id="confirmation-dialog-title" className={classes.dialogTitle}>
-        Confirmation Of Order
+      <DialogTitle id="confirmation-dialog-title" style={{ fontSize: '1.5rem', fontWeight: 700 }}>
+        ✅ Confirmation Of Order
       </DialogTitle>
-      <DialogContent dividers className={classes.dialogContent}>
-        <DialogContentText id="alert-dialog-description">
+      <DialogContent dividers>
+        <DialogContentText id="alert-dialog-description" style={{ fontSize: '1.1rem', color: '#333' }}>
           {message}
         </DialogContentText>
       </DialogContent>
-      <DialogActions className={classes.dialogActions}>
+      <DialogActions style={{ padding: '16px 24px' }}>
         <Button 
           autoFocus 
           onClick={handleCancel} 
-          className={`${classes.button} ${classes.cancelButton}`}
+          color="default"
+          variant="outlined"
+          style={{ padding: '8px 24px', fontWeight: 600 }}
         >
           Cancel
         </Button>
         <Button 
           onClick={handleOk} 
-          className={`${classes.button} ${classes.okButton}`}
+          color="primary"
+          variant="contained"
+          style={{ 
+            padding: '8px 24px', 
+            fontWeight: 600,
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          }}
         >
           Confirm
         </Button>
