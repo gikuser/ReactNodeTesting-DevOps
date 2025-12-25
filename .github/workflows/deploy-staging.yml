@@ -3,7 +3,7 @@ name: Deploy to Staging Environment
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:
+  workflow_dispatch: # Allows manual trigger button
 
 jobs:
   deploy-staging:
@@ -21,44 +21,36 @@ jobs:
     - name: Install Dependencies
       run: npm install
 
-    - name: Run Tests
+    - name: Run Linting (Code Analysis)
+      # Placeholder for linting logic
+      run: echo "Linting code analysis..." 
+
+    - name: Run Unit Tests
+      # Ensures code is verified before deploying to Staging
       run: npm test
 
     - name: Build React App
       run: npm run build-react
 
-    - name: Copy Files to Staging Server
+    - name: Deploy Files to Staging Server
       uses: appleboy/scp-action@master
       with:
-        host: ${{ secrets.HOST_STAGING }}
-        username: ${{ secrets.USERNAME }}
+        host: ${{ secrets.STAGING_EC2_IP }}
+        username: ubuntu
         key: ${{ secrets.EC2_SSH_KEY }}
         source: "./*"
         target: "/home/ubuntu/app"
 
-    - name: Start Application on Staging
+    - name: Start Application on Staging Server
       uses: appleboy/ssh-action@master
       with:
-        host: ${{ secrets.HOST_STAGING }}
-        username: ${{ secrets.USERNAME }}
+        host: ${{ secrets.STAGING_EC2_IP }}
+        username: ubuntu
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
           cd /home/ubuntu/app
+          # Install production dependencies
           npm install --production
+          # Restart the app using PM2 (or start if not running)
           pm2 restart all || pm2 start index.js --name "react-node-app"
           pm2 save
-
-    - name: Send Success Email
-      if: success()
-      uses: dawidd6/action-send-mail@v3
-      with:
-        server_address: smtp.gmail.com
-        server_port: 465
-        username: ${{ secrets.MAIL_USERNAME }}
-        password: ${{ secrets.MAIL_PASSWORD }}
-        subject: Deployment to STAGING Successful
-        body: |
-          Changes have been merged to main and deployed to Staging.
-          Access it here: http://${{ secrets.HOST_STAGING }}:3000
-        to: ${{ secrets.QA_EMAIL }}
-        from: DevOps Automation
