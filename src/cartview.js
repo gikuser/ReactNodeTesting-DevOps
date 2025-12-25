@@ -32,9 +32,9 @@ function CartView(props) {
   }, [props.cartId]);
 
   if (error) {
-    return (<h1 data-testid="error_heading_id">Failed to retrieve cart ({error.message})</h1>);
+    return (<h1 className="error-text" data-testid="error_heading_id">Failed to retrieve cart ({error.message})</h1>);
   } else if (!cart) {
-    return (<h1>Loading shopping cart...</h1>);
+    return (<h1 className="loading-text">Loading shopping cart...</h1>);
   } else {
     const costs = cart.cartItems.map(a => a.cost);
     const itemTotal = sum(...costs);
@@ -43,8 +43,8 @@ function CartView(props) {
     return (
       <>
         <div>
-          <h1 data-testid="cart_heading_id">Shopping Cart</h1>
-          <ul style={{ listStyleType: 'none', padding: 0, margin: 0 }}>
+          <h1 className="cart-title" data-testid="cart_heading_id">Shopping Cart</h1>
+          <ul className="cart-items-list">
             {cart.cartItems.map((cartItemData, idx) =>
               <li key={idx}>
                 <CartItem item={cartItemData} />
@@ -52,12 +52,24 @@ function CartView(props) {
             )}
           </ul>
         </div>
-        <div>
-          <p data-testid="itemscost_id">Items: ${(itemTotal/100).toFixed(2)}</p>
-          <p>Shipping: ${(props.shippingCost/100).toFixed(2)}</p>
-          <p>Tax: ${(tax/100).toFixed(2)}</p>
+        <div className="cart-summary">
+          <p data-testid="itemscost_id">
+            <span>Items:</span>
+            <span>${(itemTotal/100).toFixed(2)}</span>
+          </p>
+          <p>
+            <span>Shipping:</span>
+            <span>${(props.shippingCost/100).toFixed(2)}</span>
+          </p>
+          <p>
+            <span>Tax:</span>
+            <span>${(tax/100).toFixed(2)}</span>
+          </p>
           <hr></hr>
-          <p><b>Order Total: ${(total/100).toFixed(2)}</b></p>
+          <p className="order-total">
+            <span>Order Total:</span>
+            <span>${(total/100).toFixed(2)}</span>
+          </p>
         </div>
       </>
     );
