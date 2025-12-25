@@ -44,4 +44,4 @@ jobs:
             git pull
             npm install
             npm run build-react
-            pm2 restart react-node-app || pm2 start npm --name "react-node-app" -- start
+            
