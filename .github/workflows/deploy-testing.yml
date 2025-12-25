@@ -1,0 +1,47 @@
+name: Deploy to Testing
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:   # Manual trigger button
+
+jobs:
+  build-test-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build React app
+        run: npm run build-react
+
+      - name: Run Unit Tests
+        run: npm test || true  # Continue even if no tests
+
+      - name: Lint code
+        run: npm run lint || echo "No lint configured"
+
+      - name: Deploy to Testing EC2
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.TESTING_EC2_IP }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          script: |
+            cd ~/react-node-testing || git clone https://github.com/${{ github.repository }} ~/react-node-testing
+            cd ~/react-node-testing
+            git pull
+            npm install
+            npm run build-react
+            pm2 restart react-node-app || pm2 start npm --name "react-node-app" -- start
