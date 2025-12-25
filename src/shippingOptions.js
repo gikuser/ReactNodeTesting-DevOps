@@ -1,11 +1,61 @@
 import React, { useState } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import PropTypes from 'prop-types';
 import './App.css';
 
+const useStyles = makeStyles((theme) => ({
+  root: {
+    width: '100%',
+  },
+  title: {
+    color: '#333',
+    fontSize: '1.5rem',
+    fontWeight: 600,
+    marginBottom: '1.5rem',
+  },
+  radioGroup: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.75rem',
+    [theme.breakpoints.up('sm')]: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+    },
+  },
+  radioLabel: {
+    margin: 0,
+    padding: '1rem',
+    borderRadius: '8px',
+    border: '2px solid #e0e0e0',
+    transition: 'all 0.3s ease',
+    width: '100%',
+    '&:hover': {
+      borderColor: '#667eea',
+      backgroundColor: '#f8f9ff',
+    },
+    [theme.breakpoints.up('sm')]: {
+      width: 'auto',
+      minWidth: '200px',
+      flex: '1',
+    },
+  },
+  radioLabelChecked: {
+    borderColor: '#667eea !important',
+    backgroundColor: '#f0f2ff !important',
+  },
+  radio: {
+    color: '#667eea',
+    '&.Mui-checked': {
+      color: '#667eea',
+    },
+  },
+}));
+
 function ShippingOptions(props) {
+  const classes = useStyles();
   const [shipping, setShipping] = useState(0)
 
   const handleChange = (event, value) => {
@@ -17,7 +67,7 @@ function ShippingOptions(props) {
     <div>
       <h4>🚚 Choose your delivery option:</h4>
       <RadioGroup
-        row
+        className={classes.radioGroup}
         aria-label="delivery"
         data-testid="delivery_option_id"
         name="delivery"
