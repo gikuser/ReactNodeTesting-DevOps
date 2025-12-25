@@ -1,41 +1,173 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
 .App {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  padding: 40px 20px;
 }
 
-.App-link {
-  color: #61dafb;
+.app-container {
+  background: white;
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  padding: 40px;
+  max-width: 900px;
+  width: 100%;
+  animation: slideIn 0.5s ease-out;
 }
 
-@keyframes App-logo-spin {
+@keyframes slideIn {
   from {
-    transform: rotate(0deg);
+    opacity: 0;
+    transform: translateY(30px);
   }
   to {
-    transform: rotate(360deg);
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.app-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.app-header h1 {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 10px;
+  letter-spacing: -1px;
+}
+
+.app-header p {
+  color: #666;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.cart-section {
+  margin-bottom: 30px;
+}
+
+.shipping-section {
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf3 100%);
+  border-radius: 16px;
+  padding: 25px;
+  margin: 30px 0;
+  border: 2px solid #e0e6ed;
+}
+
+.shipping-section h4 {
+  color: #333;
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.purchase-button {
+  width: 100%;
+  padding: 18px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.purchase-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
+}
+
+.purchase-button:active {
+  transform: translateY(0);
+}
+
+.cart-summary {
+  background: linear-gradient(135deg, #f8f9ff 0%, #f0f2ff 100%);
+  border-radius: 16px;
+  padding: 25px;
+  margin-top: 20px;
+  border: 2px solid #e0e4ff;
+}
+
+.cart-summary p {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  color: #444;
+  font-size: 1.05rem;
+}
+
+.cart-summary hr {
+  border: none;
+  border-top: 2px solid #d0d5ff;
+  margin: 15px 0;
+}
+
+.cart-summary p:last-child {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #667eea;
+  margin-top: 10px;
+}
+
+.cart-items-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.cart-items-list li {
+  margin-bottom: 15px;
+}
+
+.loading-message, .error-message {
+  text-align: center;
+  padding: 40px;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.error-message {
+  color: #e74c3c;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .app-container {
+    padding: 25px;
+  }
+  
+  .app-header h1 {
+    font-size: 2rem;
+  }
+  
+  .purchase-button {
+    padding: 15px;
+    font-size: 1rem;
   }
 }

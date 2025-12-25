@@ -29,18 +29,35 @@ function MsgYNModal(props) {
       }}
       {...other}
     >
-      <DialogTitle id="confirmation-dialog-title">Confirmation Of Order</DialogTitle>
+      <DialogTitle id="confirmation-dialog-title" style={{ fontSize: '1.5rem', fontWeight: 700 }}>
+        ✅ Confirmation Of Order
+      </DialogTitle>
       <DialogContent dividers>
-        <DialogContentText id="alert-dialog-description">
+        <DialogContentText id="alert-dialog-description" style={{ fontSize: '1.1rem', color: '#333' }}>
           {message}
         </DialogContentText>
       </DialogContent>
-      <DialogActions>
-        <Button autoFocus onClick={handleCancel} color="primary">
+      <DialogActions style={{ padding: '16px 24px' }}>
+        <Button 
+          autoFocus 
+          onClick={handleCancel} 
+          color="default"
+          variant="outlined"
+          style={{ padding: '8px 24px', fontWeight: 600 }}
+        >
           Cancel
         </Button>
-        <Button onClick={handleOk} color="primary">
-          Ok
+        <Button 
+          onClick={handleOk} 
+          color="primary"
+          variant="contained"
+          style={{ 
+            padding: '8px 24px', 
+            fontWeight: 600,
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          }}
+        >
+          Confirm
         </Button>
       </DialogActions>
     </Dialog>
